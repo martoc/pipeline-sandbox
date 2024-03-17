@@ -30,25 +30,25 @@ LABEL_ARGS=(
   --label "org.opencontainers.image.licenses=“Copyright (c) $(date -u +'%Y') martoc"
 )
 
+docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
+
 DOCKER_IMAGE_TAGS=""
 for ARCH in ${ARCHS}; do
   echo "Building ${ARCH}..."
-  docker buildx build "${LABEL_ARGS[@]}" ${BUILD_ARGS} --build-arg ARCH=${ARCH} --no-cache --progress plain --file ${DOCKERFILE} --platform linux/${ARCH} --tag ${NAMESPACE}/${NAME}:latest-${ARCH} --tag ${NAMESPACE}/${NAME}:${TAG_VERSION}-${ARCH} .
+  docker buildx build --push "${LABEL_ARGS[@]}" ${BUILD_ARGS} --build-arg ARCH=${ARCH} --no-cache --progress plain --file ${DOCKERFILE} --platform linux/${ARCH} --tag ${NAMESPACE}/${NAME}:latest-${ARCH} --tag ${NAMESPACE}/${NAME}:${TAG_VERSION}-${ARCH} .
   DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS} ${NAMESPACE}/${NAME}:latest-${ARCH} ${NAMESPACE}/${NAME}:${TAG_VERSION}-${ARCH}"
 done
-
-docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
 
 # for IMAGE_TAG in ${DOCKER_IMAGE_TAGS}; do
 #   echo "Pushing ${IMAGE_TAG}..."
 #   docker push ${IMAGE_TAG}
 # done
 
-for ARCH in ${ARCHS}; do
-  echo ${NAMESPACE}/${NAME}:latest-${ARCH}
-done | xargs docker manifest create --amend ${NAMESPACE}/${NAME}:latest
-docker manifest push  ${NAMESPACE}/${NAME}:latest
-for ARCH in ${ARCHS}; do
-  echo ${NAMESPACE}/${NAME}:${TAG_VERSION}-${ARCH}
-done | xargs docker manifest create --amend ${NAMESPACE}/${NAME}:${TAG_VERSION}
-docker manifest push ${NAMESPACE}/${NAME}:${TAG_VERSION}
+# for ARCH in ${ARCHS}; do
+#   echo ${NAMESPACE}/${NAME}:latest-${ARCH}
+# done | xargs docker manifest create --amend ${NAMESPACE}/${NAME}:latest
+# docker manifest push  ${NAMESPACE}/${NAME}:latest
+# for ARCH in ${ARCHS}; do
+#   echo ${NAMESPACE}/${NAME}:${TAG_VERSION}-${ARCH}
+# done | xargs docker manifest create --amend ${NAMESPACE}/${NAME}:${TAG_VERSION}
+# docker manifest push ${NAMESPACE}/${NAME}:${TAG_VERSION}
