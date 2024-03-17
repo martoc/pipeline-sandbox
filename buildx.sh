@@ -3,7 +3,7 @@
 NAME="pipeline-sandbox"
 NAME="${NAME#*/}"
 NAME="${NAME#docker-}"
-ARCHS="amd64 arm64"
+ARCHS="linux/arm64,linux/amd64"
 DOCKERFILE="Dockerfile"
 NAMESPACE="martoc"
 BUILD_ARGS="--build-arg TAG_VERSION=${TAG_VERSION} --build-arg BUILD_SHA=${GITHUB_SHA}"
@@ -34,4 +34,4 @@ docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
 
 docker buildx create --use --name multiarch
 
-docker buildx build --push "${LABEL_ARGS[@]}" ${BUILD_ARGS} --no-cache --progress plain --file Dockerfile --platform linux/arm64,linux/amd64 --tag ${NAMESPACE}/${NAME}:latest --tag ${NAMESPACE}/${NAME}:${TAG_VERSION} .
+docker buildx build --push "${LABEL_ARGS[@]}" ${BUILD_ARGS} --no-cache --progress plain --file $DOCKERFILE --platform $ARCHS --tag ${NAMESPACE}/${NAME}:${TAG_VERSION} --tag ${NAMESPACE}/${NAME}:latest .
