@@ -29,6 +29,6 @@ LABEL_ARGS=(
   --label "org.opencontainers.image.licenses=“Copyright (c) $(date -u +'%Y') martoc"
 )
 docker build "${LABEL_ARGS[@]}" ${BUILD_ARGS} --tag ${NAMESPACE}/${NAME}:latest --tag ${NAMESPACE}/${NAME}:${TAG_VERSION} .
-docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
 docker push ${NAMESPACE}/${NAME}:${TAG_VERSION}
 docker push ${NAMESPACE}/${NAME}:latest
