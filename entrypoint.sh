@@ -1,3 +1,3 @@
 #! /bin/sh -e
 
-echo "ARCH=$ARCH"
+echo "My command"
