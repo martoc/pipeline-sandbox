@@ -1,13 +1,10 @@
 #! /bin/sh -e
 
-export DOCKER_BUILDKIT=1
-docker run --rm --cap-add SYS_ADMIN multiarch/qemu-user-static --reset -p yes
-
-ARCHS="amd64 arm64"
-DOCKERFILE="Dockerfile"
 NAME="pipeline-sandbox"
 NAME="${NAME#*/}"
 NAME="${NAME#docker-}"
+ARCHS="amd64 arm64"
+DOCKERFILE="Dockerfile"
 NAMESPACE="martoc"
 BUILD_ARGS="--build-arg TAG_VERSION=${TAG_VERSION} --build-arg BUILD_SHA=${GITHUB_SHA}"
 LABEL_ARGS=(
@@ -33,11 +30,21 @@ LABEL_ARGS=(
   --label "org.opencontainers.image.licenses=“Copyright (c) $(date -u +'%Y') martoc"
 )
 
-docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
+export DOCKER_BUILDKIT=1
+docker run --rm --cap-add SYS_ADMIN multiarch/qemu-user-static --reset -p yes
 
+DOCKER_IMAGE_TAGS=""
 for ARCH in ${ARCHS}; do
   echo "Building ${ARCH}..."
   docker build "${LABEL_ARGS[@]}" ${BUILD_ARGS} --build-arg ARCH=${ARCH} --no-cache --progress plain --file ${DOCKERFILE} --platform linux/${ARCH} --tag ${NAMESPACE}/${NAME}:latest-${ARCH} --tag ${NAMESPACE}/${NAME}:${TAG_VERSION}-${ARCH} .
+  DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS} ${NAMESPACE}/${NAME}:latest-${ARCH} ${NAMESPACE}/${NAME}:${TAG_VERSION}-${ARCH}"
+done
+
+docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
+
+for IMAGE_TAG in ${DOCKER_IMAGE_TAGS}; do
+  echo "Pushing ${IMAGE_TAG}..."
+  docker push ${IMAGE_TAG}
 done
 
 for ARCH in ${ARCHS}; do
@@ -45,6 +52,6 @@ for ARCH in ${ARCHS}; do
 done | xargs docker manifest create ${NAMESPACE}/${NAME}:latest
 docker manifest push ${NAMESPACE}/${NAME}:latest
 for ARCH in ${ARCHS}; do
-  echo ${NAMESPACE}/${NAME}:${VERSION}-${ARCH}
-done | xargs docker manifest create ${NAMESPACE}/${NAME}:${VERSION}
-docker manifest push ${NAMESPACE}/${NAME}:${VERSION}
+  echo ${NAMESPACE}/${NAME}:${TAG_VERSION}-${ARCH}
+done | xargs docker manifest create ${NAMESPACE}/${NAME}:${TAG_VERSION}
+docker manifest push ${NAMESPACE}/${NAME}:${TAG_VERSION}
