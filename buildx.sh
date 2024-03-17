@@ -46,9 +46,9 @@ done
 
 for ARCH in ${ARCHS}; do
   echo ${NAMESPACE}/${NAME}:latest-${ARCH}
-done | xargs docker manifest create ${NAMESPACE}/${NAME}:latest
-docker manifest push --amend ${NAMESPACE}/${NAME}:latest
+done | xargs docker manifest create --amend ${NAMESPACE}/${NAME}:latest
+docker manifest push  ${NAMESPACE}/${NAME}:latest
 for ARCH in ${ARCHS}; do
   echo ${NAMESPACE}/${NAME}:${TAG_VERSION}-${ARCH}
-done | xargs docker manifest create ${NAMESPACE}/${NAME}:${TAG_VERSION}
-docker manifest push --amend ${NAMESPACE}/${NAME}:${TAG_VERSION}
+done | xargs docker manifest create --amend ${NAMESPACE}/${NAME}:${TAG_VERSION}
+docker manifest push ${NAMESPACE}/${NAME}:${TAG_VERSION}
