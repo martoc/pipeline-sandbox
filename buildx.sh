@@ -39,10 +39,10 @@ done
 
 docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
 
-for IMAGE_TAG in ${DOCKER_IMAGE_TAGS}; do
-  echo "Pushing ${IMAGE_TAG}..."
-  docker push ${IMAGE_TAG}
-done
+# for IMAGE_TAG in ${DOCKER_IMAGE_TAGS}; do
+#   echo "Pushing ${IMAGE_TAG}..."
+#   docker push ${IMAGE_TAG}
+# done
 
 for ARCH in ${ARCHS}; do
   echo ${NAMESPACE}/${NAME}:latest-${ARCH}
