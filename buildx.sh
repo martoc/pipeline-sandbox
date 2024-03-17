@@ -32,6 +32,6 @@ LABEL_ARGS=(
 
 docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
 
-docker buildx create --use --name multiarch
+docker buildx create --use
 
 docker buildx build --push "${LABEL_ARGS[@]}" ${BUILD_ARGS} --no-cache --progress plain --file $DOCKERFILE --platform $ARCHS --tag ${NAMESPACE}/${NAME}:${TAG_VERSION} --tag ${NAMESPACE}/${NAME}:latest .
