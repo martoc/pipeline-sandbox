@@ -32,25 +32,6 @@ LABEL_ARGS=(
 
 docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
 
+docker buildx create --use --name multiarch
+
 docker buildx build --push "${LABEL_ARGS[@]}" ${BUILD_ARGS} --no-cache --progress plain --file Dockerfile --platform linux/arm64,linux/amd64 --tag ${NAMESPACE}/${NAME}:latest --tag ${NAMESPACE}/${NAME}:${TAG_VERSION} .
-
-# DOCKER_IMAGE_TAGS=""
-# for ARCH in ${ARCHS}; do
-#   echo "Building ${ARCH}..."
-#   docker buildx build --push "${LABEL_ARGS[@]}" ${BUILD_ARGS} --build-arg ARCH=${ARCH} --no-cache --progress plain --file ${DOCKERFILE} --platform linux/${ARCH} --tag ${NAMESPACE}/${NAME}:latest-${ARCH} --tag ${NAMESPACE}/${NAME}:${TAG_VERSION}-${ARCH} .
-#   DOCKER_IMAGE_TAGS="${DOCKER_IMAGE_TAGS} ${NAMESPACE}/${NAME}:latest-${ARCH} ${NAMESPACE}/${NAME}:${TAG_VERSION}-${ARCH}"
-# done
-
-# for IMAGE_TAG in ${DOCKER_IMAGE_TAGS}; do
-#   echo "Pushing ${IMAGE_TAG}..."
-#   docker push ${IMAGE_TAG}
-# done
-
-# for ARCH in ${ARCHS}; do
-#   echo ${NAMESPACE}/${NAME}:latest-${ARCH}
-# done | xargs docker manifest create --amend ${NAMESPACE}/${NAME}:latest
-# docker manifest push  ${NAMESPACE}/${NAME}:latest
-# for ARCH in ${ARCHS}; do
-#   echo ${NAMESPACE}/${NAME}:${TAG_VERSION}-${ARCH}
-# done | xargs docker manifest create --amend ${NAMESPACE}/${NAME}:${TAG_VERSION}
-# docker manifest push ${NAMESPACE}/${NAME}:${TAG_VERSION}
