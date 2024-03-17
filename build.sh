@@ -1,11 +1,10 @@
 #! /bin/sh -e
 
 DOCKERFILE="Dockerfile"
-NAME="${{ github.repository }}"
+NAME="pipeline-sandbox"
 NAME="${NAME#*/}"
 NAME="${NAME#docker-}"
-NAMESPACE="${{ github.repository_owner }}"
-DESCRIPTION="${{ github.event.head_commit.message }}"
+NAMESPACE="martoc"
 BUILD_ARGS="--build-arg TAG_VERSION=${TAG_VERSION} --build-arg BUILD_SHA=${GITHUB_SHA}"
 LABEL_ARGS=(
   --label "org.label-schema.name=${NAME}"
