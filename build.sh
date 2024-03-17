@@ -36,16 +36,9 @@ LABEL_ARGS=(
 docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
 
 for ARCH in ${ARCHS}; do
-  docker build "${LABEL_ARGS[@]}" ${BUILD_ARGS} --file ${DOCKERFILE} --platform linux/${ARCH} --tag ${NAMESPACE}/${NAME}:latest-${ARCH} --tag ${NAMESPACE}/${NAME}:${TAG_VERSION}-${ARCH} .
+  echo "Building ${ARCH}..."
+  docker build "${LABEL_ARGS[@]}" ${BUILD_ARGS} --build-arg ARCH=${ARCH} --no-cache --progress plain --file ${DOCKERFILE} --platform linux/${ARCH} --tag ${NAMESPACE}/${NAME}:latest-${ARCH} --tag ${NAMESPACE}/${NAME}:${TAG_VERSION}-${ARCH} .
 done
-
-for ARCH in ${ARCHS}; do
-  docker manifest create ${NAMESPACE}/${NAME}:${TAG_VERSION}-${ARCH} ${NAMESPACE}/${NAME}:${TAG_VERSION}-${ARCH}
-  docker manifest push ${NAMESPACE}/${NAME}:${TAG_VERSION}-${ARCH}
-done
-docker push ${NAMESPACE}/${NAME}:${TAG_VERSION}-${ARCH}
-docker push ${NAMESPACE}/${NAME}:latest-${ARCH}
-
 
 for ARCH in ${ARCHS}; do
   echo ${NAMESPACE}/${NAME}:latest-${ARCH}
