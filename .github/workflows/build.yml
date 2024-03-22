@@ -18,13 +18,13 @@
           - name: Checkout
             uses: actions/checkout@v4
             with:
-              fetch-depth: 10
+              fetch-depth: 50
               fetch-tags: true
           - name: Tag repository
             shell: bash
             run: |
-              OUTPUT=$(docker run --workdir /workdir -v $PWD:/workdir martoc/semver:1.2.0 calculate --path /workdir --add-floating-tags)
-              cat semver.log
+              OUTPUT=$(docker run -v $PWD:/workdir martoc/semver:1.2.0 calculate --path /workdir --add-floating-tags)
+              # cat semver.log
               git tag -l
               TAG_VERSION=$(echo $OUTPUT | jq -r '.next_version')
               TAG_NAME="v$TAG_VERSION"
