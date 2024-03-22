@@ -5,4 +5,6 @@
 
 # pipeline-sandbox
 
+Repository to experiment with GitHub Actions and other CI/CD tools.
+
 [Documentation >>](./docs/index.md)
