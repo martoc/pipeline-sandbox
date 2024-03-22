@@ -38,8 +38,3 @@
               echo "TAG_VERSION=$TAG_VERSION" >> "$GITHUB_OUTPUT"
               echo "TAG_NAME=$TAG_NAME" >> "$GITHUB_OUTPUT"
               echo "TAG_SHA=$TAG_SHA" >> "$GITHUB_OUTPUT"
-
-              git config user.name github-actions
-              git config user.email github-actions@github.com
-              git tag $TAG_NAME
-              git push --tags --force
