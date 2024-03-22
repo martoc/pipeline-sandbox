@@ -18,7 +18,7 @@
           - name: Checkout
             uses: actions/checkout@v4
             with:
-              fetch-depth: 50
+              fetch-depth: 40
               fetch-tags: true
           - name: Tag repository
             shell: bash
