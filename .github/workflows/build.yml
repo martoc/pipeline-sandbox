@@ -25,6 +25,7 @@
             run: |
               OUTPUT=$(docker run --workdir /workdir -v $PWD:/workdir martoc/semver:1.2.0 calculate --path /workdir --push --add-floating-tags)
               cat semver.log
+              git tag -l
               TAG_VERSION=$(echo $OUTPUT | jq -r '.next_version')
               TAG_NAME="v$TAG_VERSION"
               TAG_SHA=$(git rev-parse HEAD)
