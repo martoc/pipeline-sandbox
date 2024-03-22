@@ -20,44 +20,26 @@
             with:
               fetch-depth: 10
               fetch-tags: true
-          - name: Tag
-            uses: martoc/action-tag@main
-          - name: Container Build
+          - name: Tag repository
+            shell: bash
             run: |
-              NAME="pipeline-sandbox"
-              NAME="${NAME#*/}"
-              NAME="${NAME#docker-}"
-              ARCHS="linux/arm64,linux/amd64"
-              DOCKERFILE="Dockerfile"
-              NAMESPACE="martoc"
-              BUILD_ARGS="--build-arg TAG_VERSION=${TAG_VERSION} --build-arg BUILD_SHA=${GITHUB_SHA}"
-              LABEL_ARGS=(
-                --label "org.label-schema.name=${NAME}"
-                --label "org.label-schema.schema-version=1.0"
-                --label "org.label-schema.vcs-url=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
-                --label "org.label-schema.vcs-ref=${GITHUB_SHA}"
-                --label "org.label-schema.build-date=$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-                --label "org.label-schema.version=${TAG_VERSION}"
-                --label "org.label-schema.description=$DESCRIPTION"
-                --label "org.label-schema.usage=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/tree/${TAG_NAME}/docs/index.md"
-                --label "org.label-schema.url=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
-                --label "org.opencontainers.image.ref.name=${NAME}"
-                --label "org.opencontainers.image.source=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
-                --label "org.opencontainers.image.revision=${GITHUB_SHA}"
-                --label "org.opencontainers.image.created=$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-                --label "org.opencontainers.image.version=${TAG_VERSION}"
-                --label "org.opencontainers.image.url=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
-                --label "org.opencontainers.image.title=${NAME}"
-                --label "org.opencontainers.image.documentation=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/tree/${TAG_NAME}/docs/index.md"
-                --label "org.opencontainers.image.description=${DESCRIPTION}"
-                --label "org.opencontainers.image.authors=${GITHUB_ACTOR}"
-                --label "org.opencontainers.image.licenses=“Copyright (c) $(date -u +'%Y') martoc"
-              )
+              OUTPUT=$(docker run -v $PWD:/workdir martoc/semver:1.2.0 calculate --path /workdir)
+              TAG_VERSION=$(echo $OUTPUT | jq -r '.next_version')
+              TAG_NAME="v$TAG_VERSION"
+              TAG_SHA=$(git rev-parse HEAD)
 
-              docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
+              echo "TAG_VERSION=$TAG_VERSION"
+              echo "TAG_NAME=$TAG_NAME"
+              echo "TAG_SHA=$TAG_SHA"
+              echo "TAG_VERSION=$TAG_VERSION" >> "$GITHUB_ENV"
+              echo "TAG_NAME=$TAG_NAME" >> "$GITHUB_ENV"
+              echo "TAG_SHA=$TAG_SHA" >> "$GITHUB_ENV"
 
-              docker buildx create --use
+              echo "TAG_VERSION=$TAG_VERSION" >> "$GITHUB_OUTPUT"
+              echo "TAG_NAME=$TAG_NAME" >> "$GITHUB_OUTPUT"
+              echo "TAG_SHA=$TAG_SHA" >> "$GITHUB_OUTPUT"
 
-              docker buildx build --push "${LABEL_ARGS[@]}" ${BUILD_ARGS} --no-cache --progress plain --file $DOCKERFILE --platform $ARCHS --tag ${NAMESPACE}/${NAME}:${TAG_VERSION} --tag ${NAMESPACE}/${NAME}:latest .
-          - name: Release on GitHub
-            uses: martoc/action-release@main
+              git config user.name github-actions
+              git config user.email github-actions@github.com
+              git tag $TAG_NAME
+              git push --tags --force
