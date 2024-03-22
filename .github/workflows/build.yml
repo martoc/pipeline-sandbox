@@ -23,8 +23,8 @@
           - name: Tag repository
             shell: bash
             run: |
-              docker run -w /workdir -v $PWD:/workdir martoc/semver:1.2.0 calculate --path /workdir --add-floating-tags --push || sudo tee semver.log
-              OUTPUT=$(docker run -w /workdir -v $PWD:/workdir martoc/semver:1.2.0 calculate --path /workdir --add-floating-tags --push)
+              docker run -w /workdir -v $PWD:/workdir martoc/semver:1.2.0 calculate --path /workdir --add-floating-tags --push || true
+              ls -la .
               cat semver.log
               git tag -l
               TAG_VERSION=$(echo $OUTPUT | jq -r '.next_version')
