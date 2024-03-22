@@ -23,10 +23,7 @@
           - name: Tag repository
             shell: bash
             run: |
-              docker run -w /workdir -v $PWD:/workdir martoc/semver:1.2.0 calculate --path /workdir --add-floating-tags --push || true
-              ls -la .
-              cat semver.log
-              git tag -l
+              OUTPUT=$(docker run -w /workdir -v $PWD:/workdir martoc/semver:1.2.0 calculate --path /workdir --add-floating-tags)
               TAG_VERSION=$(echo $OUTPUT | jq -r '.next_version')
               TAG_NAME="v$TAG_VERSION"
               TAG_SHA=$(git rev-parse HEAD)
@@ -41,3 +38,7 @@
               echo "TAG_VERSION=$TAG_VERSION" >> "$GITHUB_OUTPUT"
               echo "TAG_NAME=$TAG_NAME" >> "$GITHUB_OUTPUT"
               echo "TAG_SHA=$TAG_SHA" >> "$GITHUB_OUTPUT"
+
+              git config user.name github-actions
+              git config user.email github-actions@github.com
+              git push --tags --force
