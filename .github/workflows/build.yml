@@ -11,6 +11,8 @@
         - release/**
     jobs:
       build:
+        outputs:
+          TAG_VERSION: 123
         runs-on: ubuntu-24.04
         permissions:
           contents: write
