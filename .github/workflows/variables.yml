@@ -12,19 +12,23 @@ on:
 jobs:
   job1:
     runs-on: ubuntu-latest
+    outputs:
+      pr-number: ${{ steps.set-version.outputs.TAG_VERSION }}
     steps:
       - name: Set Variable
+        id: set-version
         run: |
           export MY_VAR=123
-          echo "MY_VARIABLE=my_value" >> $GITHUB_ENV #this is workflow scoped
-      - name: Use Variable MY_VARIABLE
-        run: echo "$MY_VARIABLE"
+          echo "TAG_VERSION=1.0.0" >> $GITHUB_ENV
+          echo "TAG_VERSION=1.0.0" >> $GITHUB_OUTPUT
+      - name: Use Variable TAG_VERSION
+        run: echo "TAG_VERSION=$TAG_VERSION"
       - name: Use Variable MY_VAR
-        run: echo "$MY_VAR"
+        run: echo "MY_VAR=$MY_VAR"
 
   job2:
     needs: job1
     runs-on: ubuntu-latest
     steps:
       - name: Use Variable
-        run: echo "$MY_VARIABLE"
+        run: echo "$TAG_VERSION"
