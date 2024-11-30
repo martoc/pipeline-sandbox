@@ -36,7 +36,7 @@ jobs:
         with:
           name: tag
       - run: |
-          cat ~/tags >> $GITHUB_ENV
+          cat $GITHUB_WORKSPACE/tags >> $GITHUB_ENV
       - run: |
           echo "TAG_VERSION=$TAG_VERSION"
       - name: Show Tag Version
