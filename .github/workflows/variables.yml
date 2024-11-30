@@ -1,4 +1,4 @@
-name: build
+name: shared-variables-across-jobs
 on:
   pull_request:
     branches:
