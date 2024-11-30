@@ -13,7 +13,7 @@ jobs:
   job1:
     runs-on: ubuntu-latest
     outputs:
-      pr-number: ${{ steps.set-version.outputs.TAG_VERSION }}
+      TAG_VERSION: ${{ steps.set-version.outputs.TAG_VERSION }}
     steps:
       - name: Set Variable
         id: set-version
@@ -32,3 +32,5 @@ jobs:
     steps:
       - name: Use Variable
         run: echo "$TAG_VERSION"
+      - name: Use Variable
+        run: echo "${{ needs.job1.outputs.TAG_VERSION }}"
