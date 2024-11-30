@@ -20,6 +20,8 @@ jobs:
           fetch-depth: 40
           fetch-tags: true
       - uses: martoc/action-tag@v0
+        with:
+          skip-push: true
 
   job2:
     needs: job1

@@ -11,8 +11,6 @@ on:
     - release/**
 jobs:
   build:
-    outputs:
-      TAG_VERSION: 123
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -55,15 +53,4 @@ jobs:
 
           git config user.name github-actions
           git config user.email github-actions@github.com
-          #git push --tags --force
-  deploy:
-    needs: [build]
-    runs-on: ubuntu-24.04
-    steps:
-      - name: deploy
-        shell: sh
-        run: |
-          echo "TAG_VERSION: $TAG_VERSION"
-          echo "VERSION: ${{ env.TAG_VERSION }}"
-          echo "VERSION: ${{ env.TAG_VERSION }}"
-          echo "VERSION: ${{ needs.build.outputs.TAG_VERSION }}"
+          git push --tags --force
