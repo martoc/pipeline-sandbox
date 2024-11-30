@@ -23,10 +23,21 @@ jobs:
           fetch-tags: true
       - uses: martoc/action-tag@v0
         id: set-version
+      - run: echo TAG_VERSION=$TAG_VERSION >> ~/tags
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tag
 
   job2:
     needs: job1
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: tag
+      - run: |
+          cat ~/tags >> $GITHUB_ENV
+      - run: |
+          echo "TAG_VERSION=$TAG_VERSION"
       - name: Show Tag Version
         run: echo "TAG_VERSION=${{ needs.job1.outputs.TAG_VERSION }}"
