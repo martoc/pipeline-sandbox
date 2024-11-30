@@ -26,5 +26,5 @@ jobs:
     needs: job1
     runs-on: ubuntu-latest
     steps:
-      - name: Version
+      - name: Show Tag Version
         run: echo "TAG_VERSION=${{ needs.job1.outputs.TAG_VERSION }}"
