@@ -1,0 +1,24 @@
+name: build
+on:
+  pull_request:
+    branches:
+      - main
+      - release/**
+  push:
+    branches:
+    - main
+    - release/**
+
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Variable
+        run: echo "MY_VARIABLE=my_value" >> $GITHUB_ENV #this is workflow scoped
+
+  job2:
+    needs: job1
+    runs-on: ubuntu-latest
+    steps:
+      - name: Use Variable
+        run: echo "${{ env.MY_VARIABLE }}"
