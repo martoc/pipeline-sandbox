@@ -14,11 +14,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set Variable
-        run: echo "MY_VARIABLE=my_value" >> $GITHUB_ENV #this is workflow scoped
+        run: |
+          export MY_VAR=123
+          echo "MY_VARIABLE=my_value" >> $GITHUB_ENV #this is workflow scoped
+      - name: Use Variable MY_VARIABLE
+        run: echo "$MY_VARIABLE"
+      - name: Use Variable MY_VAR
+        run: echo "$MY_VAR"
 
   job2:
     needs: job1
     runs-on: ubuntu-latest
     steps:
       - name: Use Variable
-        run: echo "${{ env.MY_VARIABLE }}"
+        run: echo "$MY_VARIABLE"
