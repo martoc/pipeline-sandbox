@@ -55,7 +55,7 @@ jobs:
 
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git push --tags --force
+          #git push --tags --force
   deploy:
     needs: [build]
     runs-on: ubuntu-24.04
