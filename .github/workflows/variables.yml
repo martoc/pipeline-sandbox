@@ -11,6 +11,8 @@ on:
 
 jobs:
   job1:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     outputs:
       TAG_VERSION: ${{ steps.set-version.outputs.TAG_VERSION }}
