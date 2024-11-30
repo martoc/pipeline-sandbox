@@ -14,31 +14,19 @@ jobs:
     permissions:
       contents: write
     runs-on: ubuntu-latest
-    outputs:
-      TAG_VERSION: ${{ steps.set-version.outputs.TAG_VERSION }}
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 40
           fetch-tags: true
       - uses: martoc/action-tag@v0
-        id: set-version
-      - run: echo TAG_VERSION=$TAG_VERSION >> ~/tags
-      - uses: actions/upload-artifact@v4
-        with:
-          name: tag
-          path: ~/tags
 
   job2:
     needs: job1
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: martoc/action-tag@v0
         with:
-          name: tag
-      - run: |
-          cat $GITHUB_WORKSPACE/tags >> $GITHUB_ENV
+          execute: load
       - run: |
           echo "TAG_VERSION=$TAG_VERSION"
-      - name: Show Tag Version
-        run: echo "TAG_VERSION=${{ needs.job1.outputs.TAG_VERSION }}"
