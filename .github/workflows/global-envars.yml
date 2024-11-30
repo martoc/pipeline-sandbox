@@ -1,0 +1,44 @@
+name: shared-variables-across-jobs
+on:
+  pull_request:
+    branches:
+      - main
+      - release/**
+  push:
+    branches:
+    - main
+    - release/**
+env:
+  GLOBAL_VARIABLE: my-global-value
+jobs:
+  job1:
+    permissions:
+      contents: write
+    runs-on: ubuntu-24.04
+    steps:
+      - run: |
+          echo "GLOBAL_VARIABLE=$GLOBAL_VARIABLE"
+          echo "GLOBAL_VARIABLE=${{ env.GLOBAL_VARIABLE }}"
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 40
+          fetch-tags: true
+      - uses: martoc/action-tag@v0
+        with:
+          skip-push: true
+
+  job2:
+    needs: job1
+    runs-on: ubuntu-24.04
+    steps:
+      - run: |
+          echo "GLOBAL_VARIABLE=$GLOBAL_VARIABLE"
+          echo "GLOBAL_VARIABLE=${{ env.GLOBAL_VARIABLE }}"
+      - uses: martoc/action-tag@v0
+        with:
+          execute: load
+      - run: |
+          echo "GLOBAL_VARIABLE=$GLOBAL_VARIABLE"
+          echo "GLOBAL_VARIABLE=${{ env.GLOBAL_VARIABLE }}"
+      - run: |
+          echo "TAG_VERSION=$TAG_VERSION"
