@@ -24,7 +24,7 @@ jobs:
         shell: bash
         run: |
           echo "TAG_VERSION=1.0.0" > ~/.tags
-      - uses: actions/cache@v2
+      - uses: actions/cache@v4
         id: cache-tags
         with:
           path: ~/.tags
@@ -36,7 +36,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/cache@v2
+      - uses: actions/cache@v4
         id: cache-tags
         with:
           path: ~/.tags
