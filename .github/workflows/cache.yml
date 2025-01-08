@@ -1,0 +1,45 @@
+---
+name: Cache
+on:
+  pull_request:
+    branches:
+      - main
+      - release/**
+  push:
+    branches:
+      - main
+      - release/**
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 10
+          fetch-tags: true
+      - name: Tag repository
+        shell: bash
+        run: |
+          echo "TAG_VERSION=1.0.0" > ~/.tags
+      - uses: actions/cache@v2
+        id: cache-tags
+        with:
+          path: ~/.tags
+          key: "${{ github.sha }}-tags"
+
+  deploy:
+    needs: [build]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/cache@v2
+        id: cache-tags
+        with:
+          path: ~/.tags
+          key: "${{ github.sha }}-tags"
+      - run: |
+          cat ~/.tags
