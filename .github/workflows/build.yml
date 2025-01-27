@@ -18,7 +18,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 40
+          fetch-depth: 20
           fetch-tags: true
       - name: Tag repository
         shell: bash
