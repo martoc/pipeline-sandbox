@@ -24,6 +24,7 @@ jobs:
         shell: bash
         run: |
           git tag
+          git log
           OUTPUT=$(docker run -w /workdir -v $PWD:/workdir martoc/semver:1.2.0 calculate --path /workdir --add-floating-tags)
           TAG_VERSION=$(echo $OUTPUT | jq -r '.next_version')
           TAG_FLOATING_VERSION_MAJOR=$(echo $OUTPUT | jq -r '.floating_version_major')
